@@ -643,6 +643,7 @@ static int do_fdt(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 		unsigned long addr;
 		struct fdt_header *blob;
 		int ret;
+		bool has_symbols;
 
 		if (argc != 3)
 			return CMD_RET_USAGE;
@@ -655,9 +656,16 @@ static int do_fdt(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 		if (!fdt_valid(&blob))
 			return CMD_RET_FAILURE;
 
+		ret = fdt_path_offset(working_fdt, "/__symbols__");
+		has_symbols = ret >= 0;
+
 		ret = fdt_overlay_apply(working_fdt, blob);
 		if (ret) {
 			printf("fdt_overlay_apply(): %s\n", fdt_strerror(ret));
+			if (!has_symbols) {
+				printf("working fdt does did not have a /__symbols__ node\n");
+				printf("make sure you've compiled with -@\n");
+			}
 			return CMD_RET_FAILURE;
 		}
 	}

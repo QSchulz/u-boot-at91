@@ -1946,6 +1946,7 @@ int boot_get_fdt_fit(bootm_headers_t *images, ulong addr,
 	const char *uname;
 	void *base, *ov;
 	int i, err, noffset, ov_noffset;
+	bool has_symbols;
 #endif
 
 	fit_uname = fit_unamep ? *fit_unamep : NULL;
@@ -2038,9 +2039,18 @@ int boot_get_fdt_fit(bootm_headers_t *images, ulong addr,
 			fdt_noffset = err;
 			goto out;
 		}
+
+		err = fdt_path_offset(base, "/__symbols__");
+		has_symbols = err >= 0;
+
 		err = fdt_overlay_apply(base, ov);
 		if (err < 0) {
-			printf("failed on fdt_overlay_apply\n");
+			printf("failed on fdt_overlay_apply(): %s\n",
+					fdt_strerror(err));
+			if (!has_symbols) {
+				printf("base fdt does did not have a /__symbols__ node\n");
+				printf("make sure you've compiled with -@\n");
+			}
 			fdt_noffset = err;
 			goto out;
 		}
