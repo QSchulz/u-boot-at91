@@ -97,8 +97,14 @@
 #define CONFIG_ENV_SIZE			0x20000
 
 #define CONFIG_BOOTCOMMAND						\
-	"nand read 0x70000000 0x200000 0x300000;"			\
-	"bootm 0x70000000"
+	"ubi part rootfs; "						\
+	"ubifsmount ubi0:rootfs; "					\
+	"ubifsload 0x75000000 /boot/fitImage; "				\
+	"conf=conf@1; "							\
+	"for overlay in $dt_overlays; do "				\
+		"conf=${conf}#${overlay}; "				\
+	"done; "							\
+	"bootm 0x75000000#${conf}"
 #define MTDPARTS_DEFAULT						\
 	"mtdparts=atmel_nand:256k(bootstrap)ro,512k(uboot)ro,"		\
 	"256k(env),256k(env_redundant),256k(spare),"			\
@@ -129,9 +135,12 @@
 				"mtdparts=atmel_nand:" \
 				"8M(bootstrap/uboot/kernel)ro,-(rootfs) " \
 				"root=/dev/mmcblk0p2 rw rootwait"
-#define CONFIG_BOOTCOMMAND	"fatload mmc 0:1 0x71000000 dtb; " \
-				"fatload mmc 0:1 0x72000000 zImage; " \
-				"bootz 0x72000000 - 0x71000000"
+#define CONFIG_BOOTCOMMAND	"fatload mmc 0:1 0x75000000 fitImage; " \
+				"conf=conf@1; "				\
+				"for overlay in $dt_overlays; do "	\
+					"conf=${conf}#${overlay}; "	\
+				"done; "				\
+				"bootm 0x75000000#${conf}"
 #endif
 
 #define CONFIG_BAUDRATE			115200

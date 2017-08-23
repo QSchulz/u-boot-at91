@@ -116,9 +116,14 @@
 #define CONFIG_ENV_OFFSET		0x140000
 #define CONFIG_ENV_OFFSET_REDUND	0x100000
 #define CONFIG_ENV_SIZE		0x20000		/* 1 sector = 128 kB */
-#define CONFIG_BOOTCOMMAND	"nand read " \
-				"0x22000000 0x200000 0x300000; " \
-				"bootm 0x22000000"
+#define CONFIG_BOOTCOMMAND	"ubi part rootfs; "			\
+				"ubifsmount ubi0:rootfs; "		\
+				"ubifsload 0x25000000 /boot/fitImage; " \
+				"conf=conf@1; "				\
+				"for overlay in $dt_overlays; do "	\
+					"conf=${conf}#${overlay}; "	\
+				"done; "				\
+				"bootm 0x25000000#${conf}"
 #elif defined(CONFIG_SYS_USE_SPIFLASH)
 /* bootstrap + u-boot + env + linux in spi flash */
 #define CONFIG_ENV_IS_IN_SPI_FLASH
