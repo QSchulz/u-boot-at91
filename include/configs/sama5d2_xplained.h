@@ -12,6 +12,8 @@
 
 #include "at91-sama5_common.h"
 
+#define AT91_DT_OVERLAYS		"at91-sama5d2_xplained_ov7670.dtbo"
+
 #define CONFIG_MISC_INIT_R
 
 /* SDRAM */
