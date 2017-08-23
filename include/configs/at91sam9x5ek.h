@@ -156,12 +156,17 @@
 				"root=/dev/mmcblk0p2 " \
 				"rw rootfstype=ext4 rootwait"
 #else
-#define CONFIG_BOOTARGS							\
-	"console=ttyS0,115200 earlyprintk "				\
+#define MTDPARTS_DEFAULT						\
 	"mtdparts=atmel_nand:256k(bootstrap)ro,768k(uboot)ro,"		\
 	"256k(env_redundant),256k(env),"				\
-	"512k(dtb),6M(kernel)ro,-(rootfs) "				\
+	"512k(dtb),6M(kernel)ro,-(rootfs)"
+#define MTDIDS_DEFAULT		"nand0=atmel_nand"
+#define CONFIG_BOOTARGS							\
+	"console=ttyS0,115200 earlyprintk "				\
+	MTDPARTS_DEFAULT " "						\
 	"rootfstype=ubifs ubi.mtd=6 root=ubi0:rootfs rw"
+#define CONFIG_EXTRA_ENV_SETTINGS	"mtdids=" MTDIDS_DEFAULT "\0"	\
+					"mtdparts=" MTDPARTS_DEFAULT "\0"
 #endif
 
 #define CONFIG_BAUDRATE		115200

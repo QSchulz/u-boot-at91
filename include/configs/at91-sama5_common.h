@@ -71,11 +71,13 @@
 	"console=ttyS0,115200 earlyprintk "				\
 	"root=/dev/mmcblk0p2 rw rootwait"
 #else
-#define CONFIG_BOOTARGS							\
-	"console=ttyS0,115200 earlyprintk "				\
+#define MTDPARTS_DEFAULT						\
 	"mtdparts=atmel_nand:256k(bootstrap)ro,768k(uboot)ro,"		\
 	"256K(env_redundant),256k(env),"				\
-	"512k(dtb),6M(kernel)ro,-(rootfs) "				\
+	"512k(dtb),6M(kernel)ro,-(rootfs)"
+#define CONFIG_BOOTARGS							\
+	"console=ttyS0,115200 earlyprintk "				\
+	MTDPARTS_DEFAULT " "						\
 	"rootfstype=ubifs ubi.mtd=6 root=ubi0:rootfs"
 
 #ifdef CONFIG_SYS_USE_NANDFLASH
@@ -84,6 +86,9 @@
 #define CONFIG_ENV_OFFSET		0x140000
 #define CONFIG_ENV_OFFSET_REDUND	0x100000
 #define CONFIG_ENV_SIZE			0x20000
+#define MTDIDS_DEFAULT			"nand0=atmel_nand"
+#define CONFIG_EXTRA_ENV_SETTINGS	"mtdids=" MTDIDS_DEFAULT "\0"		\
+					"mtdparts=" MTDPARTS_DEFAULT "\0"	\
 #define CONFIG_BOOTCOMMAND		"nand read 0x21000000 0x180000 0x80000;"	\
 					"nand read 0x22000000 0x200000 0x600000;"	\
 					"bootz 0x22000000 - 0x21000000"

@@ -120,12 +120,17 @@
 #define CONFIG_BOOTCOMMAND	"nand read 0x22000000 0x200000 0x600000; "	\
 				"nand read 0x21000000 0x180000 0x80000; "	\
 				"bootz 0x22000000 - 0x21000000"
-#define CONFIG_BOOTARGS		\
-				"console=ttyS0,115200 earlyprintk "				\
+#define MTDIDS_DEFAULT		"nand0=atmel_nand"
+#define MTDPARTS_DEFAULT							\
 				"mtdparts=atmel_nand:256k(bootstrap)ro,512k(uboot)ro,"		\
 				"256K(env),256k(env_redundant),256k(spare),"			\
-				"512k(dtb),6M(kernel)ro,-(rootfs) "				\
+				"512k(dtb),6M(kernel)ro,-(rootfs)"
+#define CONFIG_BOOTARGS		\
+				"console=ttyS0,115200 earlyprintk "				\
+				MTDPARTS_DEFAULT " "						\
 				"rootfstype=ubifs ubi.mtd=7 root=ubi0:rootfs"
+#define CONFIG_EXTRA_ENV_SETTINGS	"mtdids=" MTDIDS_DEFAULT "\0"	\
+					"mtdparts=" MTDPARTS_DEFAULT "\0"
 
 #else /* CONFIG_SYS_USE_MMC */
 
