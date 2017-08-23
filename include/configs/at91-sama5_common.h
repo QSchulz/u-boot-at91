@@ -44,6 +44,9 @@
  * Command line configuration.
  */
 
+/* Space separated list of overlays to apply */
+#define AT91_DT_OVERLAYS
+
 #ifdef CONFIG_SYS_USE_MMC
 
 #ifdef CONFIG_ENV_IS_IN_MMC
@@ -61,11 +64,16 @@
 #define CONFIG_ENV_SIZE		0x4000
 #endif
 
+#define CONFIG_EXTRA_ENV_SETTINGS	"dt_overlays=" AT91_DT_OVERLAYS "\0"
 #define CONFIG_BOOTCOMMAND	"if test ! -n ${dtb_name}; then "	\
 				    "setenv dtb_name at91-${board_name}.dtb; " \
 				"fi; "					\
 				"fatload mmc 0:1 0x21000000 ${dtb_name}; " \
 				"fatload mmc 0:1 0x22000000 zImage; "	\
+				"test -n $dt_overlays && fdt addr 0x21000000 0x1000000; " \
+				"for overlay in $dt_overlays; do " \
+					"fatload mmc 0:1 0x20f00000 $overlay && fdt apply 0x20f00000; " \
+				"done;" \
 				"bootz 0x22000000 - 0x21000000"
 #define CONFIG_BOOTARGS							\
 	"console=ttyS0,115200 earlyprintk "				\
@@ -89,8 +97,18 @@
 #define MTDIDS_DEFAULT			"nand0=atmel_nand"
 #define CONFIG_EXTRA_ENV_SETTINGS	"mtdids=" MTDIDS_DEFAULT "\0"		\
 					"mtdparts=" MTDPARTS_DEFAULT "\0"	\
-#define CONFIG_BOOTCOMMAND		"nand read 0x21000000 0x180000 0x80000;"	\
-					"nand read 0x22000000 0x200000 0x600000;"	\
+					"dt_overlays=" AT91_DT_OVERLAYS "\0"
+#define CONFIG_BOOTCOMMAND		"if test ! -n ${dtb_name}; then "	\
+						"setenv dtb_name at91-${board_name}.dtb; " \
+					"fi; "					\
+					"ubi part rootfs; " \
+					"ubifsmount ubi0:rootfs; " \
+					"ubifsload 0x21000000 /boot/${dtb_name}; " \
+					"ubifsload 0x22000000 /boot/zImage; " \
+					"test -n $dt_overlays && fdt addr 0x21000000 0x1000000; " \
+					"for overlay in $dt_overlays; do " \
+						"ubifsload 0x20f00000 /boot/$overlay && fdt apply 0x20f00000; " \
+					"done;" \
 					"bootz 0x22000000 - 0x21000000"
 #elif CONFIG_SYS_USE_SERIALFLASH
 /* u-boot env in serial flash, by default is bus 0 and cs 0 */

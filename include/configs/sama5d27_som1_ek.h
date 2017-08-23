@@ -55,6 +55,10 @@
 /* bootstrap + u-boot + env in sd card */
 #define CONFIG_BOOTCOMMAND	"fatload mmc 0:1 0x21000000 at91-sama5d27_som1_ek.dtb; " \
 				"fatload mmc 0:1 0x22000000 zImage; " \
+				"test -n $dt_overlays && fdt addr 0x21000000 0x1000000; " \
+				"for overlay in $dt_overlays; do " \
+					"fatload mmc 0:1 0x20f00000 $overlay && fdt apply 0x20f00000; " \
+				"done;" \
 				"bootz 0x22000000 - 0x21000000"
 #undef CONFIG_BOOTARGS
 #define CONFIG_BOOTARGS \

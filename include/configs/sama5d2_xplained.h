@@ -56,6 +56,10 @@
 #define FAT_ENV_DEVICE_AND_PART	"1"
 #define CONFIG_BOOTCOMMAND	"fatload mmc 1:1 0x21000000 at91-sama5d2_xplained.dtb; " \
 				"fatload mmc 1:1 0x22000000 zImage; " \
+				"test -n $dt_overlays && fdt addr 0x21000000 0x1000000; " \
+				"for overlay in $dt_overlays; do " \
+					"fatload mmc 1:1 0x20f00000 $overlay && fdt apply 0x20f00000; " \
+				"done;" \
 				"bootz 0x22000000 - 0x21000000"
 #undef CONFIG_BOOTARGS
 #define CONFIG_BOOTARGS \
