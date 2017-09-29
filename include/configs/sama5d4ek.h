@@ -10,6 +10,8 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#define AT91_DT_OVERLAYS		"at91-sama5d4ek_spi0.dtbo"
+
 #include "at91-sama5_common.h"
 
 /* SDRAM */
