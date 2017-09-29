@@ -45,7 +45,9 @@
  */
 
 /* Space separated list of overlays to apply */
+#ifndef AT91_DT_OVERLAYS
 #define AT91_DT_OVERLAYS
+#endif
 
 #ifdef CONFIG_SYS_USE_MMC
 
