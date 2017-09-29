@@ -10,7 +10,9 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define AT91_DT_OVERLAYS		"at91-sama5d2_xplained_ov7670.dtbo"
+#define AT91_DT_OVERLAYS		"at91-sama5d2_xplained_ov7670.dtbo"	\
+					" at91-sama5d2_xplained_can0.dtbo"	\
+					" at91-sama5d2_xplained_can1.dtbo"
 
 #include "at91-sama5_common.h"
 
